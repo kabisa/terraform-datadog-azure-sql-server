@@ -1,0 +1,7 @@
+module.workers_percentage.datadog_monitor.generic_datadog_monitor[0];6556270
+module.dtu_percentage.datadog_monitor.generic_datadog_monitor[0];6536508
+module.storage_percentage.datadog_monitor.generic_datadog_monitor[0];6557243
+module.connection_failed.datadog_monitor.generic_datadog_monitor[0];6558044
+module.log_io_percent.datadog_monitor.generic_datadog_monitor[0];6557617
+module.deadlocks.datadog_monitor.generic_datadog_monitor[0];6558212
+module.sessions_percentage.datadog_monitor.generic_datadog_monitor[0];6556525
