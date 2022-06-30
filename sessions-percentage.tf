@@ -7,7 +7,7 @@ locals {
 
 module "sessions_percentage" {
   source  = "kabisa/generic-monitor/datadog"
-  version = "0.7.1"
+  version = "0.7.5"
 
   name  = "Sessions percentage"
   query = "avg(${var.sessions_percentage_evaluation_period}):avg:azure.sql_servers_databases.sessions_percent{${local.sessions_percentage_filter}} by {subscription_name,server_name} > ${var.sessions_percentage_critical}"

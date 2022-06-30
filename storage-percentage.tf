@@ -7,7 +7,7 @@ locals {
 
 module "storage_percentage" {
   source  = "kabisa/generic-monitor/datadog"
-  version = "0.7.1"
+  version = "0.7.5"
 
   name  = "Storage percentage"
   query = "max(${var.storage_percentage_evaluation_period}):avg:azure.sql_servers_databases.storage_percent{${local.storage_percentage_filter}} by {subscription_name,server_name} > ${var.storage_percentage_critical}"

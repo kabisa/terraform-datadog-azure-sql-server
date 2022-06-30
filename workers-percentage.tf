@@ -7,7 +7,7 @@ locals {
 
 module "workers_percentage" {
   source  = "kabisa/generic-monitor/datadog"
-  version = "0.7.1"
+  version = "0.7.5"
 
   name  = "Workers percentage"
   query = "avg(${var.workers_percentage_evaluation_period}):avg:azure.sql_servers_databases.workers_percent{${local.workers_percentage_filter}} by {subscription_name,server_name} > ${var.workers_percentage_critical}"
