@@ -7,7 +7,7 @@ locals {
 
 module "deadlocks" {
   source  = "kabisa/generic-monitor/datadog"
-  version = "0.7.1"
+  version = "0.7.5"
 
   name  = "Deadlocks"
   query = "sum(${var.deadlocks_evaluation_period}):sum:azure.sql_servers_databases.deadlock{${local.deadlocks_filter}} by {subscription_name,server_name}.as_count() > ${var.deadlocks_critical}"

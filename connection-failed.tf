@@ -7,7 +7,7 @@ locals {
 
 module "connection_failed" {
   source  = "kabisa/generic-monitor/datadog"
-  version = "0.7.1"
+  version = "0.7.5"
 
   name  = "Connection failed"
   query = "sum(${var.connection_failed_evaluation_period}):sum:azure.sql_servers_databases.connection_failed{${local.connection_failed_filter}} by {subscription_name,server_name}.as_count() > ${var.connection_failed_critical}"
