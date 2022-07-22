@@ -7,7 +7,7 @@ locals {
 
 module "dtu_percentage" {
   source  = "kabisa/generic-monitor/datadog"
-  version = "0.7.5"
+  version = "1.0.0"
 
   name  = "DTU Percentage"
   query = "avg(${var.dtu_percentage_evaluation_period}):avg:azure.sql_servers_databases.dtu_consumption_percent{${local.dtu_percentage_filter}} by {subscription_name,server_name} > ${var.dtu_percentage_critical}"
