@@ -14,24 +14,106 @@ We have two base modules we use to standardise development of our Monitor Module
 
 Modules are generated with this tool: https://github.com/kabisa/datadog-terraform-generator
 
+
+[Module Variables](#module-variables)
+
 Monitors:
-* [Terraform module for Datadog Azure Sql Server](#terraform-module-for-datadog-azure-sql-server)
-  * [Log Io Percent](#log-io-percent)
-  * [Dtu Percentage](#dtu-percentage)
-  * [Storage Percentage](#storage-percentage)
-  * [Workers Percentage](#workers-percentage)
-  * [Sessions Percentage](#sessions-percentage)
-  * [Connection Failed](#connection-failed)
-  * [Deadlocks](#deadlocks)
-  * [Module Variables](#module-variables)
+
+| Monitor name    | Default enabled | Priority | Query                  |
+|-----------------|------|----|------------------------|
+| [Connection Failed](#connection-failed) | True | 3  | `sum(last_30m):sum:azure.sql_servers_databases.connection_failed{tag:xxx} by {subscription_name,server_name}.as_count() > 10.0` |
+| [Deadlocks](#deadlocks) | True | 3  | `sum(last_5m):sum:azure.sql_servers_databases.deadlock{tag:xxx} by {subscription_name,server_name}.as_count() > ` |
+| [Dtu Percentage](#dtu-percentage) | True | 2  | `avg(last_30m):avg:azure.sql_servers_databases.dtu_consumption_percent{tag:xxx} by {subscription_name,server_name} > 95.0` |
+| [Log Io Percent](#log-io-percent) | True | 3  | `avg(last_30m):avg:azure.sql_servers_databases.log_write_percent{tag:xxx} by {subscription_name,server_name} > 90.0` |
+| [Sessions Percentage](#sessions-percentage) | True | 3  | `avg(last_30m):avg:azure.sql_servers_databases.sessions_percent{tag:xxx} by {subscription_name,server_name} > 95.0` |
+| [Storage Percentage](#storage-percentage) | True | 2  | `max(last_5m):avg:azure.sql_servers_databases.storage_percent{tag:xxx} by {subscription_name,server_name} > 95.0` |
+| [Workers Percentage](#workers-percentage) | True | 3  | `avg(last_30m):avg:azure.sql_servers_databases.workers_percent{tag:xxx} by {subscription_name,server_name} > 90.0` |
 
 # Getting started developing
 [pre-commit](http://pre-commit.com/) was used to do Terraform linting and validating.
 
 Steps:
    - Install [pre-commit](http://pre-commit.com/). E.g. `brew install pre-commit`.
-   - Run `pre-commit install` in this repo. (Every time you cloud a repo with pre-commit enabled you will need to run the pre-commit install command)
+   - Run `pre-commit install` in this repo. (Every time you clone a repo with pre-commit enabled you will need to run the pre-commit install command)
    - That’s it! Now every time you commit a code change (`.tf` file), the hooks in the `hooks:` config `.pre-commit-config.yaml` will execute.
+
+## Connection Failed
+
+Query:
+```terraform
+sum(last_30m):sum:azure.sql_servers_databases.connection_failed{tag:xxx} by {subscription_name,server_name}.as_count() > 10.0
+```
+
+| variable                                        | default  | required | description                      |
+|-------------------------------------------------|----------|----------|----------------------------------|
+| connection_failed_enabled                       | True     | No       |                                  |
+| connection_failed_warning                       | None     | No       |                                  |
+| connection_failed_critical                      | 10.0     | No       |                                  |
+| connection_failed_evaluation_period             | last_30m | No       |                                  |
+| connection_failed_note                          | ""       | No       |                                  |
+| connection_failed_docs                          | ""       | No       |                                  |
+| connection_failed_filter_override               | ""       | No       |                                  |
+| connection_failed_alerting_enabled              | True     | No       |                                  |
+| connection_failed_no_data_timeframe             | None     | No       |                                  |
+| connection_failed_notify_no_data                | False    | No       |                                  |
+| connection_failed_ok_threshold                  | None     | No       |                                  |
+| connection_failed_name_prefix                   | ""       | No       |                                  |
+| connection_failed_name_suffix                   | ""       | No       |                                  |
+| connection_failed_priority                      | 3        | No       | Number from 1 (high) to 5 (low). |
+| connection_failed_notification_channel_override | ""       | No       |                                  |
+
+
+## Deadlocks
+
+Query:
+```terraform
+sum(last_5m):sum:azure.sql_servers_databases.deadlock{tag:xxx} by {subscription_name,server_name}.as_count() > 
+```
+
+| variable                                | default  | required | description                      |
+|-----------------------------------------|----------|----------|----------------------------------|
+| deadlocks_enabled                       | True     | No       |                                  |
+| deadlocks_warning                       | None     | No       |                                  |
+| deadlocks_critical                      | 0.0      | No       |                                  |
+| deadlocks_evaluation_period             | last_5m  | No       |                                  |
+| deadlocks_note                          | ""       | No       |                                  |
+| deadlocks_docs                          | ""       | No       |                                  |
+| deadlocks_filter_override               | ""       | No       |                                  |
+| deadlocks_alerting_enabled              | True     | No       |                                  |
+| deadlocks_no_data_timeframe             | None     | No       |                                  |
+| deadlocks_notify_no_data                | False    | No       |                                  |
+| deadlocks_ok_threshold                  | None     | No       |                                  |
+| deadlocks_name_prefix                   | ""       | No       |                                  |
+| deadlocks_name_suffix                   | ""       | No       |                                  |
+| deadlocks_priority                      | 3        | No       | Number from 1 (high) to 5 (low). |
+| deadlocks_notification_channel_override | ""       | No       |                                  |
+
+
+## Dtu Percentage
+
+Query:
+```terraform
+avg(last_30m):avg:azure.sql_servers_databases.dtu_consumption_percent{tag:xxx} by {subscription_name,server_name} > 95.0
+```
+
+| variable                                     | default  | required | description                      |
+|----------------------------------------------|----------|----------|----------------------------------|
+| dtu_percentage_enabled                       | True     | No       |                                  |
+| dtu_percentage_warning                       | 90.0     | No       |                                  |
+| dtu_percentage_critical                      | 95.0     | No       |                                  |
+| dtu_percentage_evaluation_period             | last_30m | No       |                                  |
+| dtu_percentage_note                          | ""       | No       |                                  |
+| dtu_percentage_docs                          | ""       | No       |                                  |
+| dtu_percentage_filter_override               | ""       | No       |                                  |
+| dtu_percentage_alerting_enabled              | True     | No       |                                  |
+| dtu_percentage_no_data_timeframe             | None     | No       |                                  |
+| dtu_percentage_notify_no_data                | False    | No       |                                  |
+| dtu_percentage_ok_threshold                  | None     | No       |                                  |
+| dtu_percentage_name_prefix                   | ""       | No       |                                  |
+| dtu_percentage_name_suffix                   | ""       | No       |                                  |
+| dtu_percentage_priority                      | 2        | No       | Number from 1 (high) to 5 (low). |
+| dtu_percentage_notification_channel_override | ""       | No       |                                  |
+
 
 ## Log Io Percent
 
@@ -59,30 +141,30 @@ avg(last_30m):avg:azure.sql_servers_databases.log_write_percent{tag:xxx} by {sub
 | log_io_percent_notification_channel_override | ""       | No       |                                  |
 
 
-## Dtu Percentage
+## Sessions Percentage
 
 Query:
 ```terraform
-avg(last_30m):avg:azure.sql_servers_databases.dtu_consumption_percent{tag:xxx} by {subscription_name,server_name} > 95.0
+avg(last_30m):avg:azure.sql_servers_databases.sessions_percent{tag:xxx} by {subscription_name,server_name} > 95.0
 ```
 
-| variable                                     | default  | required | description                      |
-|----------------------------------------------|----------|----------|----------------------------------|
-| dtu_percentage_enabled                       | True     | No       |                                  |
-| dtu_percentage_warning                       | 90.0     | No       |                                  |
-| dtu_percentage_critical                      | 95.0     | No       |                                  |
-| dtu_percentage_evaluation_period             | last_30m | No       |                                  |
-| dtu_percentage_note                          | ""       | No       |                                  |
-| dtu_percentage_docs                          | ""       | No       |                                  |
-| dtu_percentage_filter_override               | ""       | No       |                                  |
-| dtu_percentage_alerting_enabled              | True     | No       |                                  |
-| dtu_percentage_no_data_timeframe             | None     | No       |                                  |
-| dtu_percentage_notify_no_data                | False    | No       |                                  |
-| dtu_percentage_ok_threshold                  | None     | No       |                                  |
-| dtu_percentage_name_prefix                   | ""       | No       |                                  |
-| dtu_percentage_name_suffix                   | ""       | No       |                                  |
-| dtu_percentage_priority                      | 2        | No       | Number from 1 (high) to 5 (low). |
-| dtu_percentage_notification_channel_override | ""       | No       |                                  |
+| variable                                          | default  | required | description                      |
+|---------------------------------------------------|----------|----------|----------------------------------|
+| sessions_percentage_enabled                       | True     | No       |                                  |
+| sessions_percentage_warning                       | None     | No       |                                  |
+| sessions_percentage_critical                      | 95.0     | No       |                                  |
+| sessions_percentage_evaluation_period             | last_30m | No       |                                  |
+| sessions_percentage_note                          | ""       | No       |                                  |
+| sessions_percentage_docs                          | ""       | No       |                                  |
+| sessions_percentage_filter_override               | ""       | No       |                                  |
+| sessions_percentage_alerting_enabled              | True     | No       |                                  |
+| sessions_percentage_no_data_timeframe             | None     | No       |                                  |
+| sessions_percentage_notify_no_data                | False    | No       |                                  |
+| sessions_percentage_ok_threshold                  | None     | No       |                                  |
+| sessions_percentage_name_prefix                   | ""       | No       |                                  |
+| sessions_percentage_name_suffix                   | ""       | No       |                                  |
+| sessions_percentage_priority                      | 3        | No       | Number from 1 (high) to 5 (low). |
+| sessions_percentage_notification_channel_override | ""       | No       |                                  |
 
 
 ## Storage Percentage
@@ -135,84 +217,6 @@ avg(last_30m):avg:azure.sql_servers_databases.workers_percent{tag:xxx} by {subsc
 | workers_percentage_name_suffix                   | ""       | No       |                                  |
 | workers_percentage_priority                      | 3        | No       | Number from 1 (high) to 5 (low). |
 | workers_percentage_notification_channel_override | ""       | No       |                                  |
-
-
-## Sessions Percentage
-
-Query:
-```terraform
-avg(last_30m):avg:azure.sql_servers_databases.sessions_percent{tag:xxx} by {subscription_name,server_name} > 95.0
-```
-
-| variable                                          | default  | required | description                      |
-|---------------------------------------------------|----------|----------|----------------------------------|
-| sessions_percentage_enabled                       | True     | No       |                                  |
-| sessions_percentage_warning                       | None     | No       |                                  |
-| sessions_percentage_critical                      | 95.0     | No       |                                  |
-| sessions_percentage_evaluation_period             | last_30m | No       |                                  |
-| sessions_percentage_note                          | ""       | No       |                                  |
-| sessions_percentage_docs                          | ""       | No       |                                  |
-| sessions_percentage_filter_override               | ""       | No       |                                  |
-| sessions_percentage_alerting_enabled              | True     | No       |                                  |
-| sessions_percentage_no_data_timeframe             | None     | No       |                                  |
-| sessions_percentage_notify_no_data                | False    | No       |                                  |
-| sessions_percentage_ok_threshold                  | None     | No       |                                  |
-| sessions_percentage_name_prefix                   | ""       | No       |                                  |
-| sessions_percentage_name_suffix                   | ""       | No       |                                  |
-| sessions_percentage_priority                      | 3        | No       | Number from 1 (high) to 5 (low). |
-| sessions_percentage_notification_channel_override | ""       | No       |                                  |
-
-
-## Connection Failed
-
-Query:
-```terraform
-sum(last_30m):sum:azure.sql_servers_databases.connection_failed{tag:xxx} by {subscription_name,server_name}.as_count() > 10.0
-```
-
-| variable                                        | default  | required | description                      |
-|-------------------------------------------------|----------|----------|----------------------------------|
-| connection_failed_enabled                       | True     | No       |                                  |
-| connection_failed_warning                       | None     | No       |                                  |
-| connection_failed_critical                      | 10.0     | No       |                                  |
-| connection_failed_evaluation_period             | last_30m | No       |                                  |
-| connection_failed_note                          | ""       | No       |                                  |
-| connection_failed_docs                          | ""       | No       |                                  |
-| connection_failed_filter_override               | ""       | No       |                                  |
-| connection_failed_alerting_enabled              | True     | No       |                                  |
-| connection_failed_no_data_timeframe             | None     | No       |                                  |
-| connection_failed_notify_no_data                | False    | No       |                                  |
-| connection_failed_ok_threshold                  | None     | No       |                                  |
-| connection_failed_name_prefix                   | ""       | No       |                                  |
-| connection_failed_name_suffix                   | ""       | No       |                                  |
-| connection_failed_priority                      | 3        | No       | Number from 1 (high) to 5 (low). |
-| connection_failed_notification_channel_override | ""       | No       |                                  |
-
-
-## Deadlocks
-
-Query:
-```terraform
-sum(last_5m):sum:azure.sql_servers_databases.deadlock{tag:xxx} by {subscription_name,server_name}.as_count() > 
-```
-
-| variable                                | default  | required | description                      |
-|-----------------------------------------|----------|----------|----------------------------------|
-| deadlocks_enabled                       | True     | No       |                                  |
-| deadlocks_warning                       | None     | No       |                                  |
-| deadlocks_critical                      | 0.0      | No       |                                  |
-| deadlocks_evaluation_period             | last_5m  | No       |                                  |
-| deadlocks_note                          | ""       | No       |                                  |
-| deadlocks_docs                          | ""       | No       |                                  |
-| deadlocks_filter_override               | ""       | No       |                                  |
-| deadlocks_alerting_enabled              | True     | No       |                                  |
-| deadlocks_no_data_timeframe             | None     | No       |                                  |
-| deadlocks_notify_no_data                | False    | No       |                                  |
-| deadlocks_ok_threshold                  | None     | No       |                                  |
-| deadlocks_name_prefix                   | ""       | No       |                                  |
-| deadlocks_name_suffix                   | ""       | No       |                                  |
-| deadlocks_priority                      | 3        | No       | Number from 1 (high) to 5 (low). |
-| deadlocks_notification_channel_override | ""       | No       |                                  |
 
 
 ## Module Variables

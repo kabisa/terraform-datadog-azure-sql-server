@@ -7,7 +7,7 @@ locals {
 
 module "log_io_percent" {
   source  = "kabisa/generic-monitor/datadog"
-  version = "0.7.5"
+  version = "1.0.0"
 
   name  = "Log IO percent"
   query = "avg(${var.log_io_percent_evaluation_period}):avg:azure.sql_servers_databases.log_write_percent{${local.log_io_percent_filter}} by {subscription_name,server_name} > ${var.log_io_percent_critical}"
